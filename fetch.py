@@ -9,16 +9,16 @@ def post(url, data):
 	request = urllib2.Request(url, urllib.urlencode(data), header)
 	return urllib2.urlopen(request).read()
 
+def get(url):
+	return urllib2.urlopen(url).read()
+
 def fetch(query):
 	results = []
 
 	fetchBxwc(query, results)
+	#fetchWxxs(query, results)
 
 	# TODO add other sites here
-	# fetchOther1(query, results)
-	# fetchOther2(query, results)
-	# fetchOther3(query, results)
-	# ...
 
 	return results
 
@@ -28,13 +28,101 @@ def fetchBxwc(query, results):
 		searchData = { 'searchkey' : query.encode('gbk'), 'action' : 'login', 'button' : u'搜 索'.encode('gbk') }
 										# html form to post, *careful with encoding!!*
 		novelHtml = post(searchUrl, searchData).decode('gbk')		# search, get the novel html, *careful with encoding!!*
-
+                #print novelHtml
 		novelSoup = BeautifulSoup(novelHtml)				# parse html
-		novelMain = novelSoup.find(id='main')				# navigate down the html....
-		novelButton = novelMain.find("li", "button2 white")
-		for link in novelButton.find_all('a', "btnlink"):
-			if (link.get_text() == u'TXT全集'):			# search for the tag......
-				results.append(link.get('href'))
+		novelMain = novelSoup.find(id='main')                           # navigate down the html....
+        	if (novelMain == None):
+                        novelContents = novelSoup.find(id = 'content2')
+                        novelOdd = novelContents.find_all(attrs={'class':'odd'})
+                    
+                        #print novelContents.find_all('a')
+                        for link in novelOdd:
+                                novelA = link.a
+                                if(novelA == None):
+                                        continue
+                                newdata = {}
+                                newhtml = post(novelA.get('href'),newdata).decode('gbk')
+                                print novelA.get('href')
+                                newsoup =  BeautifulSoup(newhtml)
+                                print 'get newsoup'
+                                newmain = newsoup.find(id = 'main')
+                                outputfile = open('results.txt','w')
+                                outputfile.write(str(newmain))
+                                
+                                name = str(newmain.find('h1'))
+                                name = name[4:(len(name)-5)]
+                                outputfile.write(name)
+                                outputfile.close()
+                                print 'get newmain'                               
+                                novelButton = newmain.find("li", "button2 white")
+                                for link2 in novelButton.find_all('a', "btnlink"):
+                                        if (link2.get_text() == u'TXT全集'):			# search for the tag......
+                                                results.append( (name.decode('utf-8', 'ignore'), link2.get('href')) )
+                else:
+                        novelButton = novelMain.find("li", "button2 white")
+                        for link in novelButton.find_all('a', "btnlink"):
+                                if (link.get_text() == u'TXT全集'):			# search for the tag......
+                                        results.append( (query, link.get('href')) )
+
+	except Exception as e:							# ignore all exceptions
+		pass
+
+def fetchWxxs(query, results):
+	try:
+		searchUrl = 'http://www.55x.cn/plus/search.php?type=title&'	# search on the novel website
+		searchData = { 'q' : query.encode('gbk'), 'action' : 'login', 'button' : u'搜 索'.encode('gbk') }
+										# html form to post, *careful with encoding!!*
+		novelHtml = post(searchUrl, searchData).decode('gbk')		# search, get the novel html, *careful with encoding!!*
+
+                outputfile = open('novelHtml.txt','w')		
+		novelSoup = BeautifulSoup(novelHtml)
+                outputfile.write(str(novelSoup))
+                outputfile.close()
+		novelList = novelSoup.find_all('a')
+                outputfile = open('novelList.txt','w')	
+                outputfile.write(str(novelList))
+                outputfile.close()
+                for link in novelList:
+                        novelHref = link.get('href')
+                        tmp = novelHref.split('/')
+                        if (len(tmp) < 4):
+                                continue
+                        if (not(tmp[3][0:3] == 'txt')):
+                                continue
+                        newdata = {}
+                        newhref = 'http://www.55x.cn'+str(novelHref)
+                        newhtml = get(newhref).decode('gbk')
+                        
+		#print type(novelSoup)
+        	#if (novelMain == None):
+                #        novelContents = novelSoup.find(id = 'content2')
+                #        novelOdd = novelContents.find_all(attrs={'class':'odd'})
+                #    
+                #        #print novelContents.find_all('a')
+                #        for link in novelOdd:
+                #                novelA = link.a
+                #                if(novelA == None):
+                #                        continue
+                #                newdata = {}
+                #                newhtml = post(novelA.get('href'),newdata).decode('gbk')
+                #                newsoup =  BeautifulSoup(newhtml)
+                #                print 'get newsoup'
+                #                newmain = newsoup.find(id = 'main')
+                #                                             
+                #                name = str(newmain.find('h1'))
+                #                name = name[4:(len(name)-5)]
+                #            
+                #                results.append(name.decode('utf-8','ignore'))
+                #                print 'get newmain'                               
+                #                novelButton = newmain.find("li", "button2 white")
+                #                for link2 in novelButton.find_all('a', "btnlink"):
+                #                        if (link2.get_text() == u'TXT全集'):			# search for the tag......
+                #                                results.append(link2.get('href'))
+                #else:
+                #        novelButton = novelMain.find("li", "button2 white")
+                #        for link in novelButton.find_all('a', "btnlink"):
+                #                if (link.get_text() == u'TXT全集'):			# search for the tag......
+                #                        results.append(link.get('href'))
 
 	except Exception as e:							# ignore all exceptions
 		pass
@@ -44,5 +132,6 @@ def fetchOther(query, results):
 	pass
 
 if __name__ == '__main__':
-	print fetch(u'武动乾坤')
-
+	results = []
+	fetchWxxs(u'武动', results)
+	print results

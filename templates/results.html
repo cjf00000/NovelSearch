@@ -1,19 +1,47 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<title>{{ queryStr }} - NovelFinder</title>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="static/favicon.png">
 
-		<LINK REL=StyleSheet HREF="/static/style.css" TYPE="text/css">
+    <title>{{ queryStr }} - NovelSearch</title>
 
-		<script type=text/javascript>
-		    var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-		</script>
-	</head>
-	<body>
-		<div class="NovelSearchResult">{{ queryStr }} 的搜索结果</div>
-		<ul id="searchResults">
+    <!-- Bootstrap core CSS -->
+    <link href="static/css/bootstrap.css" rel="stylesheet">
+    <link href="static/style.css" rel="stylesheet">
+
+    <script type=text/javascript>
+        var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="container">
+		<h3>{{ queryStr }} 的搜索结果</h3>
+		<ul id="searchResults" class="list-group">
 		{% for result in results: %}
-			<li><a href="{{ result }}">{{ result }}</a></li>
+			<li class="list-group-item"><a href="{{ result[1] }}">{{ result[0] }}</a></li>
 		{% endfor %}
 		</ul>
-	</body>
+		</div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="static/js/bootstrap.min.js"></script>
+  </body>
 </html>
