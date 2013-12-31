@@ -1,0 +1,4 @@
+sudo apt-get install python-setuptools python-dev build-essential		Python安装包
+sudo easy_install pip								pip软件包管理器
+sudo pip install flask								Flask（web框架）
+sudo pip install beautifulsoup4							BeautifulSoup（HTML解析器）

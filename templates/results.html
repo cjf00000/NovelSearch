@@ -1,0 +1,19 @@
+<html>
+	<head>
+		<title>{{ queryStr }} - NovelFinder</title>
+
+		<LINK REL=StyleSheet HREF="/static/style.css" TYPE="text/css">
+
+		<script type=text/javascript>
+		    var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+		</script>
+	</head>
+	<body>
+		<div class="NovelSearchResult">{{ queryStr }} 的搜索结果</div>
+		<ul id="searchResults">
+		{% for result in results: %}
+			<li><a href="{{ result }}">{{ result }}</a></li>
+		{% endfor %}
+		</ul>
+	</body>
+</html>

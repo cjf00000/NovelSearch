@@ -1,0 +1,18 @@
+<html>
+	<head>
+		<title>NovelFinder</title>
+
+		<LINK REL=StyleSheet HREF="/static/style.css" TYPE="text/css">
+
+		<script type=text/javascript>
+		    var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+		</script>
+	</head>
+	<body>
+		<div class="NovelSearchText"><h1>NovelSearch</h1></div>
+		<form action="search" method="GET"> 
+			<input type="TEXT" name="query"/>
+			<input type="SUBMIT" value="Search"/>
+		</form>
+	</body>
+</html>
