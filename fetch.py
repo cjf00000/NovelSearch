@@ -16,7 +16,9 @@ def fetch(query):
 	results = []
 
 	fetchBxwc(query, results)
-	#fetchWxxs(query, results)
+	print results
+	fetchWxxs(query, results)
+	print results
 
 	# TODO add other sites here
 
@@ -79,9 +81,6 @@ def fetchWxxs(query, results):
                 outputfile.write(str(novelSoup))
                 outputfile.close()
 		novelList = novelSoup.find_all('a')
-                outputfile = open('novelList.txt','w')	
-                outputfile.write(str(novelList))
-                outputfile.close()
                 for link in novelList:
                         novelHref = link.get('href')
                         tmp = novelHref.split('/')
@@ -92,38 +91,21 @@ def fetchWxxs(query, results):
                         newdata = {}
                         newhref = 'http://www.55x.cn'+str(novelHref)
                         newhtml = get(newhref).decode('gbk')
+                        #print newhtml
+                        newsoup = BeautifulSoup(newhtml)
+                        name = str(newsoup.find('h1'))
+                        name = name[4:(len(name)-5)]
+                        #print name.decode('utf-8','ignore')
+                        #results.append(name.decode('utf-8','ignore'))
+                        newdownload = newsoup.find(attrs={'class':'xiaye'})
+                        #print newdownload
+                        link = newdownload.a.get('href')
+                        newhref = 'http://www.55x.cn'+str(link)
+                        newhtml = get(newhref).decode('gbk')
+                        newsoup = BeautifulSoup(newhtml)
+                        download = newsoup.find(attrs={'class':'shuji'}).a                        
+                        results.append((name.decode('utf-8','ignore'),'http://www.55x.cn'+str(download.get('href'))))
                         
-		#print type(novelSoup)
-        	#if (novelMain == None):
-                #        novelContents = novelSoup.find(id = 'content2')
-                #        novelOdd = novelContents.find_all(attrs={'class':'odd'})
-                #    
-                #        #print novelContents.find_all('a')
-                #        for link in novelOdd:
-                #                novelA = link.a
-                #                if(novelA == None):
-                #                        continue
-                #                newdata = {}
-                #                newhtml = post(novelA.get('href'),newdata).decode('gbk')
-                #                newsoup =  BeautifulSoup(newhtml)
-                #                print 'get newsoup'
-                #                newmain = newsoup.find(id = 'main')
-                #                                             
-                #                name = str(newmain.find('h1'))
-                #                name = name[4:(len(name)-5)]
-                #            
-                #                results.append(name.decode('utf-8','ignore'))
-                #                print 'get newmain'                               
-                #                novelButton = newmain.find("li", "button2 white")
-                #                for link2 in novelButton.find_all('a', "btnlink"):
-                #                        if (link2.get_text() == u'TXT全集'):			# search for the tag......
-                #                                results.append(link2.get('href'))
-                #else:
-                #        novelButton = novelMain.find("li", "button2 white")
-                #        for link in novelButton.find_all('a', "btnlink"):
-                #                if (link.get_text() == u'TXT全集'):			# search for the tag......
-                #                        results.append(link.get('href'))
-
 	except Exception as e:							# ignore all exceptions
 		pass
 
