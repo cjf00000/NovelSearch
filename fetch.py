@@ -16,9 +16,7 @@ def fetch(query):
 	results = []
 
 	fetchBxwc(query, results)
-	print results
 	fetchWxxs(query, results)
-	print results
 
 	# TODO add other sites here
 
@@ -84,10 +82,14 @@ def fetchWxxs(query, results):
                 for link in novelList:
                         novelHref = link.get('href')
                         tmp = novelHref.split('/')
-                        if (len(tmp) < 4):
+                        if (len(tmp) < 3):
                                 continue
-                        if (not(tmp[3][0:3] == 'txt')):
-                                continue
+                        if (len(tmp) >= 4):
+                                if (not(tmp[3][0:3] == 'txt')):
+                                        continue
+                        if (len(tmp) == 3):
+                                if (not(tmp[2][0:3] =='txt')):
+                                        continue                               
                         newdata = {}
                         newhref = 'http://www.55x.cn'+str(novelHref)
                         newhtml = get(newhref).decode('gbk')
